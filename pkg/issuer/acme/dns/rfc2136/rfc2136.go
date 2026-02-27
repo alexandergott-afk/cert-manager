@@ -43,11 +43,11 @@ var supportedAlgorithms = map[string]string{
 // DNSProvider is an implementation of the acme.ChallengeProvider interface that
 // uses dynamic DNS updates (RFC 2136) to create TXT records on a nameserver.
 type DNSProvider struct {
-	nameservers    []string
-	tsigAlgorithm  string
-	network        string
-	tsigKeyName    string
-	tsigSecret     string
+	nameservers   []string
+	tsigAlgorithm string
+	network       string
+	tsigKeyName   string
+	tsigSecret    string
 }
 
 // ProviderOption is some configuration that modifies rfc2136 DNS provider.
@@ -167,10 +167,10 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 		// Setup client (muss pro Request neu erstellt oder resettet werden, ist aber hier sicherer so)
 		c := &dns.Client{Net: r.network}
 		c.TsigProvider = tsigHMACProvider(r.tsigSecret)
-		
+
 		// TSIG authentication / msg signing
-		// Wir nutzen eine frische Msg-Kopie oder setzen Tsig neu, falls nötig, 
-		// aber miekg/dns handled das meist im Exchange. 
+		// Wir nutzen eine frische Msg-Kopie oder setzen Tsig neu, falls nötig,
+		// aber miekg/dns handled das meist im Exchange.
 		// Wichtig: Tsig wird auf 'm' gesetzt.
 		if len(r.tsigKeyName) > 0 && len(r.tsigSecret) > 0 {
 			m.SetTsig(dns.Fqdn(r.tsigKeyName), r.tsigAlgorithm, 300, time.Now().Unix())
@@ -178,14 +178,14 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 		}
 
 		logf.Log.V(logf.DebugLevel).Info("Sending DNS update", "nameserver", ns, "action", action)
-		
+
 		// Send the query
 		reply, _, err := c.Exchange(m, ns)
 		if err != nil {
 			lastErr = fmt.Errorf("DNS update failed for server %s: %v", ns, err)
 			logf.Log.V(logf.DebugLevel).Info("Error updating nameserver", "nameserver", ns, "error", err)
 			// Wir brechen hier nicht ab, sondern versuchen die anderen Server auch noch zu erreichen.
-			continue 
+			continue
 		}
 		if reply != nil && reply.Rcode != dns.RcodeSuccess {
 			lastErr = fmt.Errorf("DNS update failed for server %s. Server replied: %s", ns, dns.RcodeToString[reply.Rcode])

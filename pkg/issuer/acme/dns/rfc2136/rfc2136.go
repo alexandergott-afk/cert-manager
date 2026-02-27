@@ -43,7 +43,7 @@ var supportedAlgorithms = map[string]string{
 // DNSProvider is an implementation of the acme.ChallengeProvider interface that
 // uses dynamic DNS updates (RFC 2136) to create TXT records on a nameserver.
 type DNSProvider struct {
-	nameserver    string
+	nameserver    []string
 	tsigAlgorithm string
 	network       string
 	tsigKeyName   string
@@ -77,10 +77,26 @@ func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecre
 		opt(d)
 	}
 
-	if validNameserver, err := util.ValidNameserver(nameserver); err != nil {
-		return nil, err
-	} else {
-		d.nameserver = validNameserver
+	// NEU: Splitte den String an Kommas, um mehrere Server zu unterstützen
+    serverList := strings.Split(nameserver, ",")
+    var validServers []string
+
+    for _, srv := range serverList {
+        srv = strings.TrimSpace(srv)
+        if srv == "" {
+            continue
+        }
+        if validSrv, err := util.ValidNameserver(srv); err != nil {
+            return nil, fmt.Errorf("invalid nameserver '%s': %v", srv, err)
+        } else {
+            validServers = append(validServers, validSrv)
+        }
+    }
+
+	if len(validServers) == 0 {
+        return nil, fmt.Errorf("no valid nameservers provided")
+    }else{
+		d.nameservers = validServers
 	}
 
 	if len(tsigKeyName) > 0 && len(tsigSecret) > 0 {
@@ -144,30 +160,48 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 		return fmt.Errorf("unexpected action: %s", action)
 	}
 
-	// Setup client
-	c := &dns.Client{Net: r.network}
-	c.TsigProvider = tsigHMACProvider(r.tsigSecret)
-	// TSIG authentication / msg signing
-	if len(r.tsigKeyName) > 0 && len(r.tsigSecret) > 0 {
-		m.SetTsig(dns.Fqdn(r.tsigKeyName), r.tsigAlgorithm, 300, time.Now().Unix())
-		c.TsigSecret = map[string]string{dns.Fqdn(r.tsigKeyName): r.tsigSecret}
-	}
+	var lastErr error
+    for _, ns := range r.nameservers {
+        // Setup client (muss pro Request neu erstellt oder resettet werden, ist aber hier sicherer so)
+        c := &dns.Client{Net: r.network}
+        c.TsigProvider = tsigHMACProvider(r.tsigSecret)
+        
+        // TSIG authentication / msg signing
+        // Wir nutzen eine frische Msg-Kopie oder setzen Tsig neu, falls nötig, 
+        // aber miekg/dns handled das meist im Exchange. 
+        // Wichtig: Tsig wird auf 'm' gesetzt.
+        if len(r.tsigKeyName) > 0 && len(r.tsigSecret) > 0 {
+            m.SetTsig(dns.Fqdn(r.tsigKeyName), r.tsigAlgorithm, 300, time.Now().Unix())
+            c.TsigSecret = map[string]string{dns.Fqdn(r.tsigKeyName): r.tsigSecret}
+        }
 
-	// Send the query
-	reply, _, err := c.Exchange(m, r.nameserver)
-	if err != nil {
-		return fmt.Errorf("DNS update failed: %v", err)
-	}
-	if reply != nil && reply.Rcode != dns.RcodeSuccess {
-		return fmt.Errorf("DNS update failed. Server replied: %s", dns.RcodeToString[reply.Rcode])
-	}
+        logf.Log.V(logf.DebugLevel).Info("Sending DNS update", "nameserver", ns, "action", action)
+        
+        // Send the query
+        reply, _, err := c.Exchange(m, ns)
+        if err != nil {
+            lastErr = fmt.Errorf("DNS update failed for server %s: %v", ns, err)
+            logf.Log.V(logf.DebugLevel).Info("Error updating nameserver", "nameserver", ns, "error", err)
+            // Wir brechen hier nicht ab, sondern versuchen die anderen Server auch noch zu erreichen.
+            continue 
+        }
+        if reply != nil && reply.Rcode != dns.RcodeSuccess {
+            lastErr = fmt.Errorf("DNS update failed for server %s. Server replied: %s", ns, dns.RcodeToString[reply.Rcode])
+            logf.Log.V(logf.DebugLevel).Info("Server rejected update", "nameserver", ns, "rcode", reply.Rcode)
+            continue
+        }
+    }
 
-	return nil
+    return lastErr
 }
 
 // Nameserver returns the nameserver configured for this provider when it was created
 func (r *DNSProvider) Nameserver() string {
-	return r.nameserver
+    // Rückwärtskompatibilität: Gibt den ersten Server zurück
+    if len(r.nameservers) > 0 {
+        return r.nameservers[0]
+    }
+    return ""
 }
 
 // TSIGAlgorithm returns the TSIG algorithm configured for this provider when it was created

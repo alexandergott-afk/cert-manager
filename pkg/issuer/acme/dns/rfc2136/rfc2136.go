@@ -23,7 +23,6 @@ package rfc2136
 
 import (
 	"fmt"
-    
 	"strings"
 	"time"
 

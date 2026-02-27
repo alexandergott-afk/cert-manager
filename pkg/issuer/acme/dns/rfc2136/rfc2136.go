@@ -64,7 +64,7 @@ func WithNetwork(network string) ProviderOption {
 
 // NewDNSProviderCredentials uses the supplied credentials to return a
 // DNSProvider instance configured for rfc2136 dynamic update.
-// nameserver kann jetzt eine Komma-separierte Liste sein (z.B. "10.0.0.1,10.0.0.2").
+// nameserver can now be a comma-separated list (e.g. ‘10.0.0.1,10.0.0.2’).
 func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecret string, opts ...ProviderOption) (*DNSProvider, error) {
 	logf.Log.V(logf.DebugLevel).Info("Creating RFC2136 Provider")
 
@@ -161,17 +161,13 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 		return fmt.Errorf("unexpected action: %s", action)
 	}
 
-	// NEU: Iteriere über alle Nameserver und sende das Update
-	var lastErr error
+	// Iterate over all name servers and send the update
 	for _, ns := range r.nameservers {
-		// Setup client (muss pro Request neu erstellt oder resettet werden, ist aber hier sicherer so)
+		// Setup client (must be recreated or reset for each request, but it is safer this way)
 		c := &dns.Client{Net: r.network}
 		c.TsigProvider = tsigHMACProvider(r.tsigSecret)
 
 		// TSIG authentication / msg signing
-		// Wir nutzen eine frische Msg-Kopie oder setzen Tsig neu, falls nötig,
-		// aber miekg/dns handled das meist im Exchange.
-		// Wichtig: Tsig wird auf 'm' gesetzt.
 		if len(r.tsigKeyName) > 0 && len(r.tsigSecret) > 0 {
 			m.SetTsig(dns.Fqdn(r.tsigKeyName), r.tsigAlgorithm, 300, time.Now().Unix())
 			c.TsigSecret = map[string]string{dns.Fqdn(r.tsigKeyName): r.tsigSecret}
@@ -182,24 +178,16 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 		// Send the query
 		reply, _, err := c.Exchange(m, ns)
 		if err != nil {
-			lastErr = fmt.Errorf("DNS update failed for server %s: %v", ns, err)
 			logf.Log.V(logf.DebugLevel).Info("Error updating nameserver", "nameserver", ns, "error", err)
-			// Wir brechen hier nicht ab, sondern versuchen die anderen Server auch noch zu erreichen.
-			continue
+			return fmt.Errorf("DNS update failed for server %s: %v", ns, err)
 		}
 		if reply != nil && reply.Rcode != dns.RcodeSuccess {
-			lastErr = fmt.Errorf("DNS update failed for server %s. Server replied: %s", ns, dns.RcodeToString[reply.Rcode])
 			logf.Log.V(logf.DebugLevel).Info("Server rejected update", "nameserver", ns, "rcode", reply.Rcode)
-			continue
+			return fmt.Errorf("DNS update failed for server %s. Server replied: %s", ns, dns.RcodeToString[reply.Rcode])
 		}
 	}
 
-	// Wenn auch nur ein Fehler aufgetreten ist, geben wir diesen zurück.
-	// So stellt cert-manager sicher, dass nicht "Erfolg" gemeldet wird, wenn ein Server down ist.
-	// Zertifikat-Erstellung wird fehlschlagen, wenn nicht alle Server erreicht werden konnten.
-	// Alternativ könnte man hier nur fehler zurückgeben, wenn ALLE fehlschlugen.
-	// Für ACME ist es sicherer, Fehler zu melden, wenn inkonsistente Zustände drohen.
-	return lastErr
+	return nul
 }
 
 // Nameserver returns the nameserver configured for this provider when it was created

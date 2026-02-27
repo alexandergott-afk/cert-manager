@@ -43,7 +43,7 @@ var supportedAlgorithms = map[string]string{
 // DNSProvider is an implementation of the acme.ChallengeProvider interface that
 // uses dynamic DNS updates (RFC 2136) to create TXT records on a nameserver.
 type DNSProvider struct {
-	nameservers    []string // GEÄNDERT: Slice von Strings statt einzelner String
+	nameservers    []string
 	tsigAlgorithm  string
 	network        string
 	tsigKeyName    string

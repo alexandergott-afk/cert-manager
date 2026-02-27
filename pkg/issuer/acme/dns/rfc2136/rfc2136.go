@@ -178,11 +178,9 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 		// Send the query
 		reply, _, err := c.Exchange(m, ns)
 		if err != nil {
-			logf.Log.V(logf.DebugLevel).Info("Error updating nameserver", "nameserver", ns, "error", err)
 			return fmt.Errorf("DNS update failed for server %s: %v", ns, err)
 		}
 		if reply != nil && reply.Rcode != dns.RcodeSuccess {
-			logf.Log.V(logf.DebugLevel).Info("Server rejected update", "nameserver", ns, "rcode", reply.Rcode)
 			return fmt.Errorf("DNS update failed for server %s. Server replied: %s", ns, dns.RcodeToString[reply.Rcode])
 		}
 	}

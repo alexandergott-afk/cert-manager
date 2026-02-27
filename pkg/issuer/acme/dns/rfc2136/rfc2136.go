@@ -34,7 +34,7 @@ import (
 
 // This list must be kept in sync with internal/apis/certmanager/validation/issuer.go
 var supportedAlgorithms = map[string]string{
-	"HMACMD5": dns.HmacMD5,
+	"HMACMD5":    dns.HmacMD5,
 	"HMACSHA1":   dns.HmacSHA1,
 	"HMACSHA256": dns.HmacSHA256,
 	"HMACSHA512": dns.HmacSHA512,
@@ -43,11 +43,11 @@ var supportedAlgorithms = map[string]string{
 // DNSProvider is an implementation of the acme.ChallengeProvider interface that
 // uses dynamic DNS updates (RFC 2136) to create TXT records on a nameserver.
 type DNSProvider struct {
-	nameservers   []string // GEÄNDERT: Slice von Strings statt einzelner String
-	tsigAlgorithm string
-	network string
-	tsigKeyName   string
-	tsigSecret string
+	nameservers    []string // GEÄNDERT: Slice von Strings statt einzelner String
+	tsigAlgorithm  string
+	network        string
+	tsigKeyName    string
+	tsigSecret     string
 }
 
 // ProviderOption is some configuration that modifies rfc2136 DNS provider.

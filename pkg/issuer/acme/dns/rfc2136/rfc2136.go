@@ -5,7 +5,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-	http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +17,13 @@ limitations under the License.
 // Package rfc2136 implements a DNS provider for solving the DNS-01 challenge
 // using the rfc2136 dynamic update.
 // This code was adapted from lego:
-// 	  https://github.com/xenolf/lego
+//      https://github.com/xenolf/lego
 
 package rfc2136
 
 import (
 	"fmt"
+    
 	"strings"
 	"time"
 
@@ -34,7 +35,7 @@ import (
 
 // This list must be kept in sync with internal/apis/certmanager/validation/issuer.go
 var supportedAlgorithms = map[string]string{
-	"HMACMD5":	dns.HmacMD5,
+	"HMACMD5": dns.HmacMD5,
 	"HMACSHA1":   dns.HmacSHA1,
 	"HMACSHA256": dns.HmacSHA256,
 	"HMACSHA512": dns.HmacSHA512,
@@ -45,9 +46,9 @@ var supportedAlgorithms = map[string]string{
 type DNSProvider struct {
 	nameservers   []string // GEÄNDERT: Slice von Strings statt einzelner String
 	tsigAlgorithm string
-	network	   string
+	network string
 	tsigKeyName   string
-	tsigSecret	string
+	tsigSecret string
 }
 
 // ProviderOption is some configuration that modifies rfc2136 DNS provider.

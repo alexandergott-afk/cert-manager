@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+	"strings"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/client-go/informers"

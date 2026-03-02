@@ -1612,7 +1612,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider using unsupported algorithm": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver:    []string{"127.0.0.1"},
+					Nameservers:    []string{"127.0.0.1"},
 					TSIGAlgorithm: "HAMMOCK",
 				},
 			},
@@ -1623,7 +1623,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider TSIGKeyName provided but no TSIGSecret": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver:  []string{"127.0.0.1"},
+					Nameservers:  []string{"127.0.0.1"},
 					TSIGKeyName: "some-name",
 				},
 			},
@@ -1635,7 +1635,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider TSIGSecret provided but no TSIGKeyName": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: []string{"127.0.0.1"},
+					Nameservers: []string{"127.0.0.1"},
 					TSIGSecret: validSecretKeyRef,
 				},
 			},

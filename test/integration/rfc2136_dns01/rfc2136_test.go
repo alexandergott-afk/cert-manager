@@ -189,8 +189,11 @@ func TestRFC2136NameserverIPv4WithEmptyPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+	
+	for _, ns := range dnsProvider.Nameserver() {
+		if ns != nameserver+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -199,8 +202,10 @@ func TestRFC2136NameserverIPv4WithPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver {
-		t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if ns != nameserver {
+			t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -221,8 +226,10 @@ func TestRFC2136NameserverIPv6WithoutPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v:%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v:%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -231,8 +238,10 @@ func TestRFC2136NameserverIPv6WithEmptyPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -241,8 +250,10 @@ func TestRFC2136NameserverIPv6WithPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver {
-		t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver {
+			t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -251,8 +262,10 @@ func TestRFC2136NameserverFQDNWithoutPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver+":"+defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver+":"+defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -261,8 +274,10 @@ func TestRFC2136NameserverFQDNWithEmptyPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -271,8 +286,10 @@ func TestRFC2136NameserverFQDNWithPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver {
-		t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver {
+			t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -281,8 +298,10 @@ func TestRFC2136NameserverHostnameWithoutPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver+":"+defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver+":"+defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -291,8 +310,10 @@ func TestRFC2136NameserverHostnameWithEmptyPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 
@@ -301,8 +322,10 @@ func TestRFC2136NameserverHostnameWithPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver {
-		t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if dnsProvider.Nameserver() != nameserver {
+			t.Errorf("dnsProvider.Nameserver() to be %v, but it is %v", nameserver, dnsProvider.Nameserver())
+		}
 	}
 }
 

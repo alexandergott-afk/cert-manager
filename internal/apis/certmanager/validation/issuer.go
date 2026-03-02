@@ -596,10 +596,8 @@ func ValidateACMEChallengeSolverDNS01(p *cmacme.ACMEChallengeSolverDNS01, fldPat
 			if len(p.RFC2136.Nameserver) == 0 {
 				el = append(el, field.Required(fldPath.Child("rfc2136", "nameserver"), ""))
 			} else {
-				for _, ns := range p.RFC2136.Nameserver() {
-					if _, err := util.ValidNameserver(ns); err != nil {
-						el = append(el, field.Invalid(fldPath.Child("rfc2136", "nameserver"), ns, "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."))
-					}
+				if _, err := util.ValidNameserver(p.RFC2136.Nameserver); err != nil {
+					el = append(el, field.Invalid(fldPath.Child("rfc2136", "nameserver"), ns, "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."))
 				}
 			}
 			if len(p.RFC2136.TSIGAlgorithm) > 0 {

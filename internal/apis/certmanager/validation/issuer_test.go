@@ -1541,7 +1541,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider with IPv4 nameserver": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameservers: [...]{"127.0.0.1"},
+					Nameservers: [...]string{"127.0.0.1"},
 				},
 			},
 			errs: []*field.Error{},

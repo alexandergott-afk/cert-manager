@@ -194,7 +194,7 @@ func (s *Solver) buildDNSProvider(ch *whapi.ChallengeRequest) (*DNSProvider, err
 	}
 	
 	// Split the string at commas to support multiple servers
-    serverList := strings.Split(cfg.Nameservers, ",")
+    serverList := strings.Split(cfg.Nameserver, ",")
 	
 	var Nameservers []string
 	for _, srv := range serverList {

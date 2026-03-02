@@ -1298,7 +1298,27 @@ func Convert_acme_ACMEIssuerDNS01ProviderDigitalOcean_To_v1_ACMEIssuerDNS01Provi
 }
 
 func autoConvert_v1_ACMEIssuerDNS01ProviderRFC2136_To_acme_ACMEIssuerDNS01ProviderRFC2136(in *acmev1.ACMEIssuerDNS01ProviderRFC2136, out *acme.ACMEIssuerDNS01ProviderRFC2136, s conversion.Scope) error {
-	out.Nameservers = in.Nameserver
+	// Split the string at commas to support multiple servers
+    serverList := strings.Split(in.Nameserver, ",")
+	
+	var Nameservers []string
+	for _, srv := range serverList {
+		srv = strings.TrimSpace(srv)
+		if srv == "" {
+			continue
+		}
+		if validSrv, err := util.ValidNameserver(srv); err != nil {
+			return nil, fmt.Errorf("invalid nameserver '%s': %v", srv, err)
+		} else {
+			Nameservers = append(Nameservers, validSrv)
+		}
+	}
+
+    if len(Nameservers) == 0 {
+        return nil, fmt.Errorf("no nameserver configured")
+    }
+	
+	out.Nameservers = Nameservers
 	if err := metav1.Convert_v1_SecretKeySelector_To_meta_SecretKeySelector(&in.TSIGSecret, &out.TSIGSecret, s); err != nil {
 		return err
 	}
@@ -1314,7 +1334,7 @@ func Convert_v1_ACMEIssuerDNS01ProviderRFC2136_To_acme_ACMEIssuerDNS01ProviderRF
 }
 
 func autoConvert_acme_ACMEIssuerDNS01ProviderRFC2136_To_v1_ACMEIssuerDNS01ProviderRFC2136(in *acme.ACMEIssuerDNS01ProviderRFC2136, out *acmev1.ACMEIssuerDNS01ProviderRFC2136, s conversion.Scope) error {
-	out.Nameserver = in.Nameservers
+	out.Nameserver = []string(in.Nameservers)
 	if err := metav1.Convert_meta_SecretKeySelector_To_v1_SecretKeySelector(&in.TSIGSecret, &out.TSIGSecret, s); err != nil {
 		return err
 	}

@@ -28,7 +28,6 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/cert-manager/cert-manager/internal/apis/certmanager/validation/util"
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 )
 

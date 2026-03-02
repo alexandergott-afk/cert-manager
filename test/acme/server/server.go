@@ -54,7 +54,7 @@ type BasicServer struct {
 	// TSIGZone is the DNS zone that should be used in TSIG responses
 	TSIGZone string
 
-	listenAddr string
+	listenAddr []string
 	server     *dns.Server
 }
 

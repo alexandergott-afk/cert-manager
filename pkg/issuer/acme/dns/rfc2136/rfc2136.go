@@ -90,12 +90,6 @@ func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName,
         }
         validNameserver = append(validNameserver, validNs)
     }
-	
-	if validNameserver, err := util.ValidNameserver(nameserver); err != nil {
-		return nil, err
-	} else {
-		d.nameserver = validNameserver
-	}
 
 	if len(tsigKeyName) > 0 && len(tsigSecret) > 0 {
 		d.tsigKeyName = tsigKeyName

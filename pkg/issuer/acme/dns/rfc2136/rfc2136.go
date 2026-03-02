@@ -28,6 +28,7 @@ import (
 
 	"github.com/miekg/dns"
 
+	"github.com/cert-manager/cert-manager/internal/apis/certmanager/validation/util"
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
 )
 
@@ -77,11 +78,24 @@ func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName,
 		opt(d)
 	}
 
-	if len(nameservers) == 0 {
-		return nil, fmt.Errorf("no valid nameservers provided")
+	validServers := make([]string, 0, len(nameservers))
+    for _, ns := range nameservers {
+        ns = strings.TrimSpace(ns)
+        if ns == "" {
+            return nil, fmt.Errorf("invalid nameserver '%s', ns)
+        }
+        validNs, err := util.ValidNameserver(ns)
+        if err != nil {
+            return nil, fmt.Errorf("invalid nameserver '%s': %w", ns, err)
+        }
+        validNameserver = append(validNameserver, validNs)
+    }
+	
+	if validNameserver, err := util.ValidNameserver(nameserver); err != nil {
+		return nil, err
+	} else {
+		d.nameserver = validNameserver
 	}
-
-	d.nameservers = nameservers
 
 	if len(tsigKeyName) > 0 && len(tsigSecret) > 0 {
 		d.tsigKeyName = tsigKeyName

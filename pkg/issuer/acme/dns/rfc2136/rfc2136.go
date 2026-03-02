@@ -78,7 +78,7 @@ func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName,
 		opt(d)
 	}
 
-	validServers := make([]string, 0, len(nameservers))
+	nameservers := make([]string, 0, len(nameservers))
 	for _, ns := range nameservers {
 		ns = strings.TrimSpace(ns)
 		if ns == "" {
@@ -89,6 +89,12 @@ func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName,
 			return nil, fmt.Errorf("invalid nameserver '%s': %w", ns, err)
 		}
 		validNameserver = append(validNameserver, validNs)
+	}
+	
+    if len(validNameserver) == 0 {
+        return nil, fmt.Errorf("no valid nameservers provided")
+    }else {
+    	d.nameservers = validNameserver
 	}
 
 	if len(tsigKeyName) > 0 && len(tsigSecret) > 0 {

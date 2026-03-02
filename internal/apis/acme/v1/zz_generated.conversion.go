@@ -24,6 +24,7 @@ package v1
 import (
 	unsafe "unsafe"
 	"strings"
+	"fmt"
 
 	acme "github.com/cert-manager/cert-manager/internal/apis/acme"
 	meta "github.com/cert-manager/cert-manager/internal/apis/meta"
@@ -36,6 +37,7 @@ import (
 	conversion "k8s.io/apimachinery/pkg/conversion"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	apisv1 "sigs.k8s.io/gateway-api/apis/v1"
+	"github.com/cert-manager/cert-manager/internal/apis/certmanager/validation/util"
 )
 
 func init() {

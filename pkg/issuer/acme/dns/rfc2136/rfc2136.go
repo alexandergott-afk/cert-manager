@@ -82,7 +82,7 @@ func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName,
 	for _, ns := range nameservers {
 		ns = strings.TrimSpace(ns)
 		if ns == "" {
-			return nil, fmt.Errorf("invalid nameserver '%s', ns)
+			return nil, fmt.Errorf("invalid nameserver '%s'", ns)
 		}
 		validNs, err := util.ValidNameserver(ns)
 		if err != nil {

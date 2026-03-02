@@ -68,7 +68,7 @@ func WithNetwork(network string) ProviderOption {
 // authentication, leave the TSIG parameters as empty strings.
 // nameserver must be a network address in the form "IP" or "IP:port".
 // nameserver can now be a comma-separated list (e.g. ‘10.0.0.1,10.0.0.2’).
-func NewDNSProviderCredentials(nameservers, tsigAlgorithm, tsigKeyName, tsigSecret string, opts ...ProviderOption) (*DNSProvider, error) {
+func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName, tsigSecret string, opts ...ProviderOption) (*DNSProvider, error) {
 	logf.Log.V(logf.DebugLevel).Info("Creating RFC2136 Provider")
 
 	d := &DNSProvider{}

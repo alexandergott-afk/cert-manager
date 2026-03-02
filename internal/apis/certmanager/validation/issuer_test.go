@@ -1535,7 +1535,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{},
 			},
 			errs: []*field.Error{
-				field.Required(fldPath.Child("rfc2136", "nameserver"), ""),
+				field.Required(fldPath.Child("rfc2136", "nameservers"), ""),
 			},
 		},
 		"rfc2136 provider with IPv4 nameserver": {
@@ -1549,27 +1549,27 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider with unenclosed IPv6 nameserver": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: "2001:db8::1",
+					Nameservers: []string{"2001:db8::1"},
 				},
 			},
 			errs: []*field.Error{
-				field.Invalid(fldPath.Child("rfc2136", "nameserver"), "2001:db8::1", "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."),
+				field.Invalid(fldPath.Child("rfc2136", "nameservers"), "2001:db8::1", "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."),
 			},
 		},
 		"rfc2136 provider with empty IPv6 nameserver": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: "[]:53",
+					Nameservers: []string{"[]:53"},
 				},
 			},
 			errs: []*field.Error{
-				field.Invalid(fldPath.Child("rfc2136", "nameserver"), "[]:53", "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."),
+				field.Invalid(fldPath.Child("rfc2136", "nameservers"), "[]:53", "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."),
 			},
 		},
 		"rfc2136 provider with IPv6 nameserver": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: "[2001:db8::1]",
+					Nameservers: []string{"[2001:db8::1]"},
 				},
 			},
 			errs: []*field.Error{},
@@ -1577,7 +1577,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider with FQDN nameserver": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: "dns.example.com",
+					Nameservers: []string{"dns.example.com"},
 				},
 			},
 			errs: []*field.Error{},
@@ -1585,7 +1585,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider with hostname nameserver": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: "dns",
+					Nameservers: []string{"dns"},
 				},
 			},
 			errs: []*field.Error{},
@@ -1593,17 +1593,17 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider with nameserver without host": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: ":53",
+					Nameservers: []string{":53"},
 				},
 			},
 			errs: []*field.Error{
-				field.Invalid(fldPath.Child("rfc2136", "nameserver"), ":53", "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."),
+				field.Invalid(fldPath.Child("rfc2136", "nameservers"), ":53", "nameserver must be set in the form host:port where host is an IPv4 address, an enclosed IPv6 address or a hostname and port is an optional port number."),
 			},
 		},
 		"rfc2136 provider using case-camel in algorithm": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver:    "127.0.0.1",
+					Nameservers:    []string{"127.0.0.1"},
 					TSIGAlgorithm: "HmAcMd5",
 				},
 			},
@@ -1612,7 +1612,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider using unsupported algorithm": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver:    "127.0.0.1",
+					Nameserver:    []string{"127.0.0.1"},
 					TSIGAlgorithm: "HAMMOCK",
 				},
 			},
@@ -1623,7 +1623,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider TSIGKeyName provided but no TSIGSecret": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver:  "127.0.0.1",
+					Nameserver:  []string{"127.0.0.1"},
 					TSIGKeyName: "some-name",
 				},
 			},
@@ -1635,7 +1635,7 @@ func TestValidateACMEIssuerDNS01Config(t *testing.T) {
 		"rfc2136 provider TSIGSecret provided but no TSIGKeyName": {
 			cfg: &cmacme.ACMEChallengeSolverDNS01{
 				RFC2136: &cmacme.ACMEIssuerDNS01ProviderRFC2136{
-					Nameserver: "127.0.0.1",
+					Nameserver: []string{"127.0.0.1"},
 					TSIGSecret: validSecretKeyRef,
 				},
 			},

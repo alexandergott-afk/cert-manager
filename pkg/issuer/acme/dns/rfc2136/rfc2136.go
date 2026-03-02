@@ -69,7 +69,7 @@ func WithNetwork(network string) ProviderOption {
 // authentication, leave the TSIG parameters as empty strings.
 // nameserver must be a network address in the form "IP" or "IP:port".
 // nameserver can now be a comma-separated list (e.g. ‘10.0.0.1,10.0.0.2’).
-func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecret string, opts ...ProviderOption) (*DNSProvider, error) {
+func NewDNSProviderCredentials(nameservers, tsigAlgorithm, tsigKeyName, tsigSecret string, opts ...ProviderOption) (*DNSProvider, error) {
 	logf.Log.V(logf.DebugLevel).Info("Creating RFC2136 Provider")
 
 	d := &DNSProvider{}
@@ -78,27 +78,11 @@ func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecre
 		opt(d)
 	}
 
-	// Split the string at commas to support multiple servers
-	serverList := strings.Split(nameserver, ",")
-	var validServers []string
-
-	for _, srv := range serverList {
-		srv = strings.TrimSpace(srv)
-		if srv == "" {
-			continue
-		}
-		if validSrv, err := util.ValidNameserver(srv); err != nil {
-			return nil, fmt.Errorf("invalid nameserver '%s': %v", srv, err)
-		} else {
-			validServers = append(validServers, validSrv)
-		}
-	}
-
-	if len(validServers) == 0 {
+	if len(nameservers) == 0 {
 		return nil, fmt.Errorf("no valid nameservers provided")
 	}
 
-	d.nameservers = validServers
+	d.nameservers = nameservers
 
 	if len(tsigKeyName) > 0 && len(tsigSecret) > 0 {
 		d.tsigKeyName = tsigKeyName

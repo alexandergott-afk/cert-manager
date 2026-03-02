@@ -78,7 +78,7 @@ func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecre
 		opt(d)
 	}
 
-	// NEU: Splitte den String an Kommas, um mehrere Server zu unterstützen
+	// Split the string at commas to support multiple servers
 	serverList := strings.Split(nameserver, ",")
 	var validServers []string
 
@@ -116,18 +116,15 @@ func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecre
 	}
 	d.tsigAlgorithm = tsigAlgorithm
 
-	// Logging (maskiert das Secret)
+	
 	keyLen := len(d.tsigSecret)
 	mask := make([]rune, keyLen/2)
 	for i := range mask {
 		mask[i] = '*'
 	}
-	masked := ""
-	if keyLen > 0 {
-		masked = d.tsigSecret[0:keyLen/4] + string(mask) + d.tsigSecret[keyLen/4*3:keyLen]
-	}
+	masked := d.tsigSecret[0:keyLen/4] + string(mask) + d.tsigSecret[keyLen/4*3:keyLen]
 	logf.Log.V(logf.DebugLevel).Info("DNSProvider",
-		"nameservers", d.nameservers, // Loggt nun die Liste
+		"nameservers", d.nameservers,
 		"tsigAlgorithm", d.tsigAlgorithm,
 		"tsigKeyName", d.tsigKeyName,
 		"tsigSecret", masked,
@@ -194,11 +191,7 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 
 // Nameserver returns the nameserver configured for this provider when it was created
 func (r *DNSProvider) Nameserver() string {
-	// Rückwärtskompatibilität: Gibt den ersten Server zurück
-	if len(r.nameservers) > 0 {
-		return r.nameservers[0]
-	}
-	return ""
+	return r.nameservers
 }
 
 // TSIGAlgorithm returns the TSIG algorithm configured for this provider when it was created

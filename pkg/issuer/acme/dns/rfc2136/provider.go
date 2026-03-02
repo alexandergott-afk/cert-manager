@@ -190,23 +190,25 @@ func (s *Solver) buildDNSProvider(ch *whapi.ChallengeRequest) (*DNSProvider, err
 		key = string(secret)
 	}
 	
-    // Parse nameservers from StringList (supports single string or array)
-    Nameservers := parseNameservers(cfg.Nameservers)
+	// Split the string at commas to support multiple servers
+    serverList := strings.Split(cfg.Nameservers, ",")
+	
+	var Nameservers []string
+	for _, srv := range serverList {
+		srv = strings.TrimSpace(srv)
+		if srv == "" {
+			continue
+		}
+		if validSrv, err := util.ValidNameserver(srv); err != nil {
+			return nil, fmt.Errorf("invalid nameserver '%s': %v", srv, err)
+		} else {
+			Nameservers = append(Nameservers, validSrv)
+		}
+	}
 
     if len(Nameservers) == 0 {
         return nil, fmt.Errorf("no nameserver configured")
     }
 
 	return NewDNSProviderCredentials(Nameservers, cfg.TSIGAlgorithm, cfg.TSIGKeyName, key, WithNetwork(string(cfg.Protocol)))
-}
-
-func parseNameservers(nameservers cmacme.StringList) []string {
-    result := make([]string, 0, len(nameservers))
-    for _, ns := range nameservers {
-        ns = strings.TrimSpace(ns)
-        if ns != "" {
-            result = append(result, ns)
-        }
-    }
-    return result
 }

@@ -32,6 +32,8 @@ import (
 	cmacme "github.com/cert-manager/cert-manager/pkg/apis/acme/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	logf "github.com/cert-manager/cert-manager/pkg/logs"
+	
+	"github.com/cert-manager/cert-manager/internal/apis/certmanager/validation/util"
 )
 
 const SolverName = "rfc2136"

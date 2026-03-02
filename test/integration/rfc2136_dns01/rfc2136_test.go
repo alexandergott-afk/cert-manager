@@ -177,8 +177,10 @@ func TestRFC2136NameserverIPv4WithoutPort(t *testing.T) {
 	dnsProvider, err := rfc2136.NewDNSProviderCredentials(nameserver, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.NoError(t, err)
 
-	if dnsProvider.Nameserver() != nameserver+":"+defaultPort {
-		t.Errorf("dnsProvider.Nameserver() to be %v:%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+	for _, ns := range dnsProvider.Nameserver() {
+		if ns != nameserver+":"+defaultPort {
+			t.Errorf("dnsProvider.Nameserver() to be %v:%v, but it is %v", nameserver, defaultPort, dnsProvider.Nameserver())
+		}
 	}
 }
 

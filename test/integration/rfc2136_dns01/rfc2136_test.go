@@ -92,7 +92,7 @@ func TestRFC2136ServerSuccess(t *testing.T) {
 		}
 	}()
 
-	provider, err := rfc2136.NewDNSProviderCredentials(server.ListenAddr(), "", "", "")
+	provider, err := rfc2136.NewDNSProviderCredentials([]string{server.ListenAddr()}, "", "", "")
 	if err != nil {
 		t.Fatalf("Expected rfc2136.NewDNSProviderCredentials() to return no error but the error was -> %v", err)
 	}
@@ -117,7 +117,7 @@ func TestRFC2136ServerError(t *testing.T) {
 		}
 	}()
 
-	provider, err := rfc2136.NewDNSProviderCredentials(server.ListenAddr(), "", "", "")
+	provider, err := rfc2136.NewDNSProviderCredentials([]string{server.ListenAddr()}, "", "", "")
 	if err != nil {
 		t.Fatalf("Expected rfc2136.NewDNSProviderCredentials() to return no error but the error was -> %v", err)
 	}
@@ -148,7 +148,7 @@ func TestRFC2136TsigClient(t *testing.T) {
 		}
 	}()
 
-	provider, err := rfc2136.NewDNSProviderCredentials(server.ListenAddr(), "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
+	provider, err := rfc2136.NewDNSProviderCredentials([]string{server.ListenAddr()}, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	if err != nil {
 		t.Fatalf("Expected rfc2136.NewDNSProviderCredentials() to return no error but the error was -> %v", err)
 	}
@@ -158,17 +158,17 @@ func TestRFC2136TsigClient(t *testing.T) {
 }
 
 func TestRFC2136NameserverEmpty(t *testing.T) {
-	_, err := rfc2136.NewDNSProviderCredentials("", "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
+	_, err := rfc2136.NewDNSProviderCredentials([]string{""}, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.Error(t, err)
 }
 
 func TestRFC2136NameserverWithoutHost(t *testing.T) {
-	_, err := rfc2136.NewDNSProviderCredentials(":53", "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
+	_, err := rfc2136.NewDNSProviderCredentials([]string{":53"}, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.Error(t, err)
 }
 
 func TestRFC2136NameserverWithoutHostNorPort(t *testing.T) {
-	_, err := rfc2136.NewDNSProviderCredentials(":", "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
+	_, err := rfc2136.NewDNSProviderCredentials([]string{":"}, "", rfc2136TestTsigKeyName, rfc2136TestTsigSecret)
 	assert.Error(t, err)
 }
 

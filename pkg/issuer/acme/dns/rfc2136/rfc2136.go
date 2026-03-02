@@ -17,7 +17,7 @@ limitations under the License.
 // Package rfc2136 implements a DNS provider for solving the DNS-01 challenge
 // using the rfc2136 dynamic update.
 // This code was adapted from lego:
-// 	    https://github.com/xenolf/lego
+// 	  https://github.com/xenolf/lego
 
 package rfc2136
 
@@ -51,6 +51,8 @@ type DNSProvider struct {
 }
 
 // ProviderOption is some configuration that modifies rfc2136 DNS provider.
+// It is meant to replace optional parameters and move towards function parameters and higher order functions.
+// Currently only protocol is migrated and future work is to be done on this.
 type ProviderOption func(*DNSProvider)
 
 func WithNetwork(network string) ProviderOption {
@@ -63,7 +65,9 @@ func WithNetwork(network string) ProviderOption {
 }
 
 // NewDNSProviderCredentials uses the supplied credentials to return a
-// DNSProvider instance configured for rfc2136 dynamic update.
+// DNSProvider instance configured for rfc2136 dynamic update. To disable TSIG
+// authentication, leave the TSIG parameters as empty strings.
+// nameserver must be a network address in the form "IP" or "IP:port".
 // nameserver can now be a comma-separated list (e.g. ‘10.0.0.1,10.0.0.2’).
 func NewDNSProviderCredentials(nameserver, tsigAlgorithm, tsigKeyName, tsigSecret string, opts ...ProviderOption) (*DNSProvider, error) {
 	logf.Log.V(logf.DebugLevel).Info("Creating RFC2136 Provider")

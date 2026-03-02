@@ -124,7 +124,7 @@ func (b *BasicServer) RunWithAddress(ctx context.Context, listenAddr, network st
 	return nil
 }
 
-func (b *BasicServer) ListenAddr() []string {
+func (b *BasicServer) ListenAddr() string {
 	return b.listenAddr
 }
 

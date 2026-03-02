@@ -593,7 +593,7 @@ func ValidateACMEChallengeSolverDNS01(p *cmacme.ACMEChallengeSolverDNS01, fldPat
 		} else {
 			numProviders++
 			// Nameserver is the only required field for RFC2136
-			if len(p.RFC2136.Nameserver) == 0 {
+			if len(p.RFC2136.Nameservers) == 0 {
 				el = append(el, field.Required(fldPath.Child("rfc2136", "nameservers"), ""))
 			} else {
 				for _, ns := range p.RFC2136.Nameservers {

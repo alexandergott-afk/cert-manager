@@ -173,7 +173,7 @@ func (r *DNSProvider) changeRecord(action, fqdn, zone, value string, ttl uint32)
 }
 
 // Nameserver returns the nameserver configured for this provider when it was created
-func (r *DNSProvider) Nameserver() []string {
+func (r *DNSProvider) Nameservers() []string {
 	return r.nameservers
 }
 

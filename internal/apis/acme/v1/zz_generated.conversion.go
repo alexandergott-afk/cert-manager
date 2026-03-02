@@ -23,6 +23,7 @@ package v1
 
 import (
 	unsafe "unsafe"
+	"strings"
 
 	acme "github.com/cert-manager/cert-manager/internal/apis/acme"
 	meta "github.com/cert-manager/cert-manager/internal/apis/meta"

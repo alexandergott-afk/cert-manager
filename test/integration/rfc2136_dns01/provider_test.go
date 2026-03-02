@@ -48,7 +48,7 @@ func TestRunSuiteWithTSIG(t *testing.T) {
 	}()
 
 	var validConfig = cmacme.ACMEIssuerDNS01ProviderRFC2136{
-		Nameserver: server.ListenAddr(),
+		Nameservers: server.ListenAddr(),
 		TSIGSecret: cmmeta.SecretKeySelector{
 			LocalObjectReference: cmmeta.LocalObjectReference{
 				Name: "testkey",
@@ -88,7 +88,7 @@ func TestRunSuiteNoTSIG(t *testing.T) {
 	}()
 
 	var validConfig = cmacme.ACMEIssuerDNS01ProviderRFC2136{
-		Nameserver: server.ListenAddr(),
+		Nameservers: server.ListenAddr(),
 	}
 
 	fixture := dns.NewFixture(rfc2136.New(rfc2136.InitializeResetLister()),

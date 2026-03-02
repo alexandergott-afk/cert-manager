@@ -78,7 +78,7 @@ func NewDNSProviderCredentials(nameservers []string, tsigAlgorithm, tsigKeyName,
 		opt(d)
 	}
 
-	nameservers := make([]string, 0, len(nameservers))
+	validNameserver := make([]string, 0, len(nameservers))
 	for _, ns := range nameservers {
 		ns = strings.TrimSpace(ns)
 		if ns == "" {
